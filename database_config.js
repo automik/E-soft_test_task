@@ -1,23 +1,117 @@
-const mysql = require('mysql');
+const mysql = require('mysql')
 
 const con = mysql.createConnection({
     host: "localhost",
     user: "admin",
     password: "qwerty1234",
     database: "node_database"
-});
+})
 
 function create_table(name, dict){
     let columns = ''
     for (const [key, value] of Object.entries(dict)) {
-        columns += key + ' ' + value + ', ';
+        columns += key + ' ' + value + ', '
     }
     columns = columns.slice(0, -2)
     let sql = `CREATE TABLE ${name} (${columns});`
     console.log(sql)
     con.query(sql, (err, result) => {
+        if (err) throw err
+        console.log(result)
+    })
+}
+
+function insert(table, dict){
+    let values = ''
+    let keys = ''
+    for (const [key, value] of Object.entries(dict)) {
+        keys += key + ', '
+        if(typeof(value) === 'string'){
+            values += "'" + value + "'" + ', '
+        }else {
+            values += value + ', '
+        }
+    }
+    keys = keys.slice(0, -2)
+    values = values.slice(0, -2)
+    let sql = `INSERT INTO ${table} (${keys}) VALUES (${values});`
+    console.log(sql)
+    con.query(sql, (err, result) => {
+        if (err) throw err
+        console.log(result)
+    })
+}
+
+function select(table, dict, lim){
+    let conditions = ''
+    for (const [key, value] of Object.entries(dict)) {
+        if(typeof(value) === 'string'){
+            conditions += key + " = '" + value + "' AND "
+        }else {
+            conditions += key + " = " + value + " AND "
+        }
+    }
+    conditions = conditions.slice(0, -5)
+    let sql = NaN
+    if(lim === undefined) {
+        sql = `SELECT * FROM ${table} WHERE ${conditions};`
+    } else{
+        sql = `SELECT * FROM ${table} WHERE ${conditions} LIMIT ${lim};`
+    }
+    console.log(sql)
+    con.query(sql, (err, result) => {
+        if (err) throw err
+        console.log(result)
+        return result
+    })
+}
+
+function update(table, column_dict, condition_dict){
+    let columns = ''
+    for (const [key, value] of Object.entries(column_dict)) {
+        if(typeof(value) === 'string'){
+            columns += key + " = '" + value + "', "
+        }else {
+            columns += key + " = " + value + ", "
+        }
+    }
+    columns = columns.slice(0, -2)
+
+    let conditions = ''
+    for (const [key, value] of Object.entries(condition_dict)) {
+        if(typeof(value) === 'string'){
+            conditions += key + " = '" + value + "' AND "
+        }else {
+            conditions += key + " = " + value + " AND "
+        }
+    }
+    conditions = conditions.slice(0, -5)
+
+    let sql = `UPDATE ${table} SET ${columns} WHERE ${conditions};`
+    console.log(sql)
+    con.query(sql, (err, result) => {
         if(err) throw err
         console.log(result)
+    })
+}
+
+
+function del(table, dict){
+    let conditions = ''
+    for (const [key, value] of Object.entries(dict)) {
+        if(typeof(value) === 'string'){
+            conditions += key + " = '" + value + "' AND "
+        }else {
+            conditions += key + " = " + value + " AND "
+        }
+    }
+    conditions = conditions.slice(0, -5)
+    let sql = `DELETE FROM ${table} WHERE ${conditions};`
+    console.log(sql)
+    con.query(sql, (err, result) => {
+        if (err) throw err
+        console.log(result)
+        return result
     })
 }
 
@@ -32,6 +126,9 @@ function init_db(){
                                     'end_date': 'date', 'creation_date': 'date', 'update_date': 'date', 'priority': 'varchar(7)',
                                     'state': 'varchar(12)', 'creator_id': 'int' ,  'FOREIGN KEY (creator_id)': 'REFERENCES users(id)',
                                     'user_id': 'int', 'FOREIGN KEY (user_id)': 'REFERENCES users(id)'})
+    insert('users', {'name': 'we', 'surname': 'YEET', 'patronymic': 'ku', 'login': 'test0@mail.ru', 'password': 'qwerty1234'})
+    insert('users', {'name': 'we', 'surname': 'YEET', 'patronymic': 'ku', 'login': 'test1@mail.ru', 'password': 'qwerty1234'})
+    insert('user_director', {'director_id': 1, 'user_id': 2})
 }
 
 function drop_db(){
@@ -49,4 +146,4 @@ function drop_db(){
 
 drop_db()
 init_db()
-// module.exports = create_table()
+module.exports = [select(), update()]
