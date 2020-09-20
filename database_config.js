@@ -7,7 +7,18 @@ const con = mysql.createConnection({
     database: "node_database"
 })
 
-function create_table(name, dict){
+function query(sql){
+    return new Promise(function(resolve, reject){
+        con.query(sql, function(err, result){
+            if (err) throw err
+            console.log(result)
+            resolve(result)
+        })
+
+    })
+}
+
+async function create_table(name, dict){
     let columns = ''
     for (const [key, value] of Object.entries(dict)) {
         columns += key + ' ' + value + ', '
@@ -15,13 +26,10 @@ function create_table(name, dict){
     columns = columns.slice(0, -2)
     let sql = `CREATE TABLE ${name} (${columns});`
     console.log(sql)
-    con.query(sql, (err, result) => {
-        if (err) throw err
-        console.log(result)
-    })
+    await query(sql)
 }
 
-function insert(table, dict){
+async function insert(table, dict){
     let values = ''
     let keys = ''
     for (const [key, value] of Object.entries(dict)) {
@@ -36,13 +44,10 @@ function insert(table, dict){
     values = values.slice(0, -2)
     let sql = `INSERT INTO ${table} (${keys}) VALUES (${values});`
     console.log(sql)
-    con.query(sql, (err, result) => {
-        if (err) throw err
-        console.log(result)
-    })
+    await query(sql)
 }
 
-function select(table, dict, lim){
+async function select(table, dict, callback,  lim){
     let conditions = ''
     for (const [key, value] of Object.entries(dict)) {
         if(typeof(value) === 'string'){
@@ -52,21 +57,19 @@ function select(table, dict, lim){
         }
     }
     conditions = conditions.slice(0, -5)
-    let sql = NaN
+    let sql
     if(lim === undefined) {
         sql = `SELECT * FROM ${table} WHERE ${conditions};`
     } else{
         sql = `SELECT * FROM ${table} WHERE ${conditions} LIMIT ${lim};`
     }
     console.log(sql)
-    con.query(sql, (err, result) => {
-        if (err) throw err
-        console.log(result)
-        return result
-    })
+
+    let res = await query(sql)
+    callback(res)
 }
 
-function update(table, column_dict, condition_dict){
+async function update(table, column_dict, condition_dict){
     let columns = ''
     for (const [key, value] of Object.entries(column_dict)) {
         if(typeof(value) === 'string'){
@@ -89,14 +92,11 @@ function update(table, column_dict, condition_dict){
 
     let sql = `UPDATE ${table} SET ${columns} WHERE ${conditions};`
     console.log(sql)
-    con.query(sql, (err, result) => {
-        if(err) throw err
-        console.log(result)
-    })
+    await query(sql)
 }
 
 
-function del(table, dict){
+async function del(table, dict){
     let conditions = ''
     for (const [key, value] of Object.entries(dict)) {
         if(typeof(value) === 'string'){
@@ -108,11 +108,7 @@ function del(table, dict){
     conditions = conditions.slice(0, -5)
     let sql = `DELETE FROM ${table} WHERE ${conditions};`
     console.log(sql)
-    con.query(sql, (err, result) => {
-        if (err) throw err
-        console.log(result)
-        return result
-    })
+    await query(sql)
 }
 
 function init_db(){
@@ -144,6 +140,10 @@ function drop_db(){
 }
 
 
-drop_db()
-init_db()
-module.exports = [select(), update()]
+// drop_db()
+// init_db()
+module.exports = {
+    select: select,
+    update: update,
+    insert: insert
+}

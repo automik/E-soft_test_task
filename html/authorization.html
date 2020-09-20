@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+    <link type="text/css" rel="stylesheet" href="../css/authorization.css">
+</head>
+<body>
+
+<form class="authorization" id="authorization">
+
+    <label for="login" id="label_login" class="label_start">Электронная почта</label>
+    <input type="email" id="login" name="login" class="un_focused" required>
+    <span id="login_incorrect" class="error">Пользователя с такой почтой не существует</span>
+
+    <label for="password" id="label_password" class="label_start">Пароль</label>
+    <input type="password" id="password" name="password" class="un_focused" required>
+    <span id="password_incorrect" class="error">Введён неверный пароль</span>
+
+
+    <div id="buttons">
+        <button type="submit" id="submit">Войти</button>
+        <button type="button" id="registration">Регистрация</button>
+    </div>
+</form>
+
+<script src="../js/jquery-3.5.1.min.js"></script>
+<script src="../js/authorization.js"></script>
+</body>
+</html>

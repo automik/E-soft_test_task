@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+    <link type="text/css" rel="stylesheet" href="../css/registration.css">
+</head>
+<body>
+
+<form class="registration" id="registration">
+
+    <label for="name" id="label_name" class="label_start">Имя</label>
+    <input type="text" id="name" name="name" class="un_focused" required>
+    <span  class="error error_start"></span>
+
+    <label for="surname" id="label_surname" class="label_start">Фамилия</label>
+    <input type="text" id="surname" name="surname" class="un_focused" required>
+    <span class="error_start error"></span>
+
+    <label for="patronymic" id="label_patronymic" class="label_start">Отчество</label>
+    <input type="text" id="patronymic" name="patronymic" class="un_focused" required>
+    <span class="error_start error"></span>
+
+    <label for="login" id="label_login" class="label_start">Электронная почта</label>
+    <input type="email" id="login" name="login" class="un_focused" required>
+    <span id="login_incorrect" class="error_start error">Пользователь с такой почтой уже существует</span>
+
+    <label for="password" id="label_password" class="label_start">Пароль</label>
+    <input type="password" id="password" name="password" class="un_focused" required>
+    <span class="error_start error"></span>
+
+    <label for="director_login" id="label_director_login" class="label_start">Электронная почта директора</label>
+    <input type="email" id="director_login" name="director_login" class="un_focused">
+    <span id="director_login_incorrect" class="error_start error">Пользователь с такой почтой не найден</span>
+
+    <div id="buttons">
+        <button type="submit" id="submit">Регистрация</button>
+        <button type="button" id="authorization">Войти</button>
+    </div>
+</form>
+
+<script src="../js/jquery-3.5.1.min.js"></script>
+<script src="../js/registration.js"></script>
+</body>
+</html>
