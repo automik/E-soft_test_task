@@ -28,6 +28,20 @@ server.on('request', async function(req, res) {
         }
     }
 
+    if(current_url.pathname === '/css/index.css'){
+        fs.readFile('css/index.css', (err, data) => {
+            res.write(data)
+            res.end()
+        })
+    }
+
+    if(current_url.pathname === '/js/index.js'){
+        fs.readFile('js/index.js', (err, data) => {
+            res.write(data)
+            res.end()
+        })
+    }
+
 
     if(current_url.pathname === '/authorization'){
         if(session.user_id !== 0) {

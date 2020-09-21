@@ -3,9 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <title>TODO</title>
+    <link type="text/css" rel="stylesheet" href="../css/index.css">
 </head>
 <body>
-<p> SHIIIIIET </p>
 <a href="/authorization">authorization</a>
+<div id="all_tasks">
+
+    <div class="task task_start">
+        <form id="task_1" class="task_form">
+        <div class="inline_parameters">
+
+            <div class="inline_labels">
+                <label for="title_1" class="inline_label">Заголовок</label>
+                <label for="priority_1" class="inline_label">Приоритет</label>
+                <label for="end_date_1" class="inline_label">Дата окончания</label>
+                <label for="user_1" class="inline_label">Ответсвенный</label>
+                <label for="status_1" class="inline_label">Статус</label>
+            </div>
+
+            <div class="inline_inputs">
+
+                <input type="text" class="title inline_input input_disabled un_focused" id="title_1">
+
+                <select class="inline_input input_disabled un_focused specific_select" id="priority_1">
+                    <option disabled>Выберите приоритет</option>
+                    <option value="Высокий">Высокий</option>
+                    <option value="Средний">Средний</option>
+                    <option value="Низкий">Низкий</option>
+                </select>
+
+                <input type="date" class="inline_input input_disabled un_focused" id="end_date_1">
+
+                <input type="text" class="inline_input input_disabled un_focused" id="user_1" disabled>
+
+                <select class="inline_input input_disabled un_focused specific_select" id="status_1">
+                    <option disabled>Выберите статус</option>
+                    <option value="К выполнению">К выполнению</option>
+                    <option value="Выполняется">Выполняется</option>
+                    <option value="Выполнена">Выполнена</option>
+                    <option value="Отменена">Отменена</option>
+                </select>
+
+                <button type="button" class="change_button">Редактировать</button>
+
+            </div>
+
+        </div>
+
+        <div class="left_parameters left_parameters_start">
+
+            <div class="left_labels">
+                <label for="creation_date_1" class="left_label">Дата создания</label>
+                <label for="update_date_1" class="left_label">Дата обновения</label>
+                <label for="creator_1" class="left_label">Создатель</label>
+                <label for="user_email_1" class="left_label">Почта ответсвенного</label>
+                <label for="description_1" class="left_label">Описание</label>
+            </div>
+
+            <div class="left_inputs">
+                <input type="date" class="left_input un_focused" id="creation_date_1">
+                <input type="date" class="left_input un_focused" id="update_date_1">
+                <input type="text" disabled class="left_input un_focused" id="creator_1">
+                <input type="email" class="left_input un_focused" id="user_email_1">
+                <textarea class="description left_input un_focused" id="description_1" rows="2" cols="30"></textarea>
+            </div>
+
+        </div>
+        </form>
+    </div>
+
+</div>
+
+
+<script src="../js/jquery-3.5.1.min.js"></script>
+<script src="../js/index.js"></script>
 </body>
 </html>

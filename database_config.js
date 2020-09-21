@@ -124,6 +124,9 @@ function init_db(){
                                     'user_id': 'int', 'FOREIGN KEY (user_id)': 'REFERENCES users(id)'})
     insert('users', {'name': 'we', 'surname': 'YEET', 'patronymic': 'ku', 'login': 'test0@mail.ru', 'password': 'qwerty1234'})
     insert('users', {'name': 'we', 'surname': 'YEET', 'patronymic': 'ku', 'login': 'test1@mail.ru', 'password': 'qwerty1234'})
+    insert('tasks', {'title':'TEST_TASK', 'description':'just try to test this shit', 'end_date':'2020-09-24',
+                               'creation_date':'2020-09-17', 'update_date':'2020-09-21', 'priority':'Высокий',
+                               'state':'Выполняется', 'creator_id':1, 'user_id':2})
     insert('user_director', {'director_id': 1, 'user_id': 2})
 }
 
