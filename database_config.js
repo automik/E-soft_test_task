@@ -56,12 +56,16 @@ async function select(table, dict, callback,  lim){
             conditions += key + " = " + value + " AND "
         }
     }
-    conditions = conditions.slice(0, -5)
     let sql
-    if(lim === undefined) {
-        sql = `SELECT * FROM ${table} WHERE ${conditions};`
+    if(conditions.length > 0){
+        conditions = conditions.slice(0, -5)
+        if(lim === undefined) {
+            sql = `SELECT * FROM ${table} WHERE ${conditions};`
+        } else{
+            sql = `SELECT * FROM ${table} WHERE ${conditions} LIMIT ${lim};`
+        }
     } else{
-        sql = `SELECT * FROM ${table} WHERE ${conditions} LIMIT ${lim};`
+        sql = `SELECT * FROM ${table};`
     }
     console.log(sql)
 

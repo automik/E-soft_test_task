@@ -16,17 +16,13 @@
 }
 
 @keyframes fold {
-    from{
-        height: 200px;
-    }
-    to{
-        height: 100px;
-    }
+    from{height: 200px;}
+    to{height: 100px;}
 }
 
 .task_folded{
     height:100px;
-    animation: 2s ease fould;
+    animation: 1s ease fold;
     animation-iteration-count: 1;
 }
 
@@ -41,7 +37,7 @@
 
 .task_not_folded{
     height: 200px;
-    animation: 2s ease un_fould;
+    animation: 1s ease un_fold;
     animation-iteration-count: 1;
 }
 
@@ -65,42 +61,63 @@
 
 .left_parameters{
     width: 100%;
+    position: relative;
 }
 
 .left_parameters_start{
-    display:none;
+    opacity: 0;
+    height: 0;
 }
 
 @keyframes hide_left_parameters {
-    from{
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
+    from {
+        opacity: 100%;
+        top: 0;
+        height: 100px;
     }
-    to{display:none;}
+    to {
+        opacity: 0;
+        top: -100px;
+        height: 0;
+    }
 }
 
 .left_parameters_folded{
-    display:none;
-    animation: 1s ease hide_left_parameters;
+    opacity: 0;
+    height: 0;
+    /*display: none;*/
+
+    animation: 1s ease;
+    animation-name: hide_left_parameters;
+    animation-iteration-count: 1;
+    top: -9999px;
 }
 
 @keyframes show_left_parameters {
     from{
-        display:none;
+        opacity: 0;
+        top: -100px;
+        height: 0;
     }
     to{
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
+        opacity: 100%;
+        top: 0;
+        height: 100px;
     }
 }
 
 .left_parameters_un_folded{
+    opacity: 100%;
+    height: 100px;
+
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    animation: 1s ease show_left_parameters;
+
+    animation: 1s ease;
+    animation-name: show_left_parameters;
+    animation-iteration-count: 1;
+    /*transition: top;*/
 }
 /*#buttons{*/
 /*    width:100%;*/
@@ -153,8 +170,9 @@
 }
 
 .description{
+    font-size: 18px;
     width: 410px;
-    height: 60px;
+    height: 45px;
     overflow: auto;
 }
 
