@@ -13,14 +13,13 @@ let session ={'user_id':0, 'user':NaN}
 server.on('request', async function(req, res) {
     let current_url = url.parse(req.url, true)
     console.log(req.method, req.url)
-    console.log(session)
+    // console.log(session)
     let url_data = current_url.query
     let user = []
     switch (current_url.pathname) {
 
         case '/':
             if(session.user_id === 0){
-                console.log('redirectingeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
                 res.writeHead(302, {Location: '/authorization'})
                 res.end()
             } else {
@@ -54,11 +53,47 @@ server.on('request', async function(req, res) {
             await db_config.select('tasks', {}, function(result) {
                 tasks = result
             })
-            res.write(JSON.stringify({'tasks': tasks}))
+            let users
+            await db_config.select('users', {}, function(result) {
+                users = result
+            })
+            res.write(JSON.stringify({'tasks': tasks, 'users':users, 'user':session['user']}))
             res.end()
-
-
             break
+
+
+        case '/task/submit':
+            url_data = current_url.query
+            user = []
+            console.log(url_data)
+            console.log(parseInt(url_data['creator_id'].slice(1, -1)))
+            await db_config.select('users', {'login': url_data['responsible_user_email']}, function(result) {
+                user = result
+            })
+            if(user.length === 0){
+                res.write(JSON.stringify({'result': 'not_existing_user_email'}))
+                res.end()
+            } else{
+                let connection =[]
+                await db_config.select('user_director', {'user_id':user[0]['id'], 'director_id':parseInt(url_data['creator_id'].slice(1, -1))}, function(result){
+                    connection = result
+                })
+                if(connection.length === 0){
+                    res.write(JSON.stringify({'result': 'not_existing_user_director_connection'}))
+                    res.end()
+                } else {
+                    await db_config.update('tasks', {
+                        'title': url_data['title'], 'priority': url_data['priority'],
+                        'end_date': url_data['end_date'], 'update_date': url_data['new_update_date'].slice(1, -1),
+                        'state': url_data['state'], 'description': url_data['description'],
+                        'responsible_user_id': user[0]['id']
+                    }, {})
+                    res.write(JSON.stringify({'result': 'successful'}))
+                    res.end()
+                }
+            }
+            break
+
 
         case '/authorization':
             if(session.user_id !== 0) {
@@ -191,6 +226,7 @@ server.on('request', async function(req, res) {
 
 
         default:
+            console.log('404   ' + current_url)
             res.writeHead(404)
             res.end()
             break

@@ -47,8 +47,6 @@ $(document).ready(function() {
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function (data) {
-                    console.log(data)
-                    console.log('data is here')
                     if(data['result'] === 'wrong_email'){
                         login_incorrect.animate({
                             opacity: '+=100%'
@@ -59,7 +57,6 @@ $(document).ready(function() {
                             opacity: '+=100%'
                         }, 300)
                     }
-                    console.log('what?')
                     if(data['result'] === 'successful'){
                         window.location.assign('/')
                     }

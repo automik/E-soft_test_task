@@ -9,34 +9,34 @@
 <a href="/authorization">authorization</a>
 <div id="all_tasks">
 
-    <div id="task_1" class="task task_start">
-        <form id="form_task_1" class="task_form">
+    <div id="task_" class="task task_start">
+        <form id="form_task_" class="task_form">
         <div class="inline_parameters">
 
             <div class="inline_labels">
-                <label for="title_1" class="inline_label">Заголовок</label>
-                <label for="priority_1" class="inline_label">Приоритет</label>
-                <label for="end_date_1" class="inline_label">Дата окончания</label>
-                <label for="user_1" class="inline_label">Ответсвенный</label>
-                <label for="status_1" class="inline_label">Статус</label>
+                <label for="title_" class="inline_label">Заголовок</label>
+                <label for="priority_" class="inline_label">Приоритет</label>
+                <label for="end_date_" class="inline_label">Дата окончания</label>
+                <label for="user_" class="inline_label">Ответсвенный</label>
+                <label for="state_" class="inline_label">Статус</label>
             </div>
 
             <div class="inline_inputs">
 
-                <input type="text" class="title inline_input input_disabled un_focused" id="title_1" value="Test">
+                <input type="text" name="title" class="input title inline_input input_disabled un_focused" id="title_" value="Test" required>
 
-                <select class="inline_input input_disabled un_focused specific_select" id="priority_1">
+                <select name="priority" class="input inline_input input_disabled un_focused specific_select" id="priority_" required>
                     <option disabled>Выберите приоритет</option>
                     <option value="Высокий">Высокий</option>
                     <option value="Средний">Средний</option>
                     <option value="Низкий">Низкий</option>
                 </select>
 
-                <input type="date" class="inline_input input_disabled un_focused" id="end_date_1">
+                <input name="end_date" type="date" class="input inline_input input_disabled un_focused" id="end_date_" required>
 
-                <input type="text" class="inline_input input_disabled un_focused" id="user_1" disabled>
+                <input name="responsible_user_name" type="text" class="input inline_input input_disabled un_focused disabled_forever" id="user_" required>
 
-                <select class="inline_input input_disabled un_focused specific_select" id="status_1">
+                <select name="state" class="input inline_input input_disabled un_focused specific_select" id="state_" required>
                     <option disabled>Выберите статус</option>
                     <option value="К выполнению">К выполнению</option>
                     <option value="Выполняется">Выполняется</option>
@@ -53,19 +53,24 @@
         <div class="left_parameters left_parameters_start">
 
             <div class="left_labels">
-                <label for="creation_date_1" class="left_label">Дата создания</label>
-                <label for="update_date_1" class="left_label">Дата обновения</label>
-                <label for="creator_1" class="left_label">Создатель</label>
-                <label for="user_email_1" class="left_label">Почта ответсвенного</label>
-                <label for="description_1" class="left_label">Описание</label>
+                <label for="creation_date_" class="left_label">Дата создания</label>
+                <label for="update_date_" class="left_label">Дата обновения</label>
+                <label for="creator_" class="left_label">Создатель</label>
+                <label for="user_email_" class="left_label">Почта ответсвенного</label>
+                <label for="description_" class="left_label">Описание</label>
             </div>
 
             <div class="left_inputs">
-                <input type="date" class="left_input un_focused input_disabled" id="creation_date_1">
-                <input type="date" class="left_input un_focused input_disabled" id="update_date_1">
-                <input type="text" disabled class="left_input un_focused input_disabled" id="creator_1">
-                <input type="email" class="left_input un_focused input_disabled" id="user_email_1">
-                <textarea class="description left_input un_focused input_disabled" id="description_1" rows="2" cols="30"></textarea>
+                <input name="creation_date" type="date" class="input left_input un_focused input_disabled disabled_forever" id="creation_date_" required>
+                <input name="update_date" type="date" class="input left_input un_focused input_disabled disabled_forever" id="update_date_" required>
+                <input name="creator_name" type="text" class="input left_input un_focused input_disabled disabled_forever" id="creator_" required>
+                <input name="responsible_email" type="email" class="input left_input un_focused input_disabled" id="user_email_" required>
+                <textarea name="description" class="input description left_input un_focused input_disabled" id="description_" rows="2" cols="30" required></textarea>
+
+                <button type="submit" class="save_button">Сохранить</button>
+            </div>
+            <div class="request_result left_parameters_start">
+                <span class="error error_start">У вас нет подчинённого с такой почтой</span>
             </div>
 
         </div>
