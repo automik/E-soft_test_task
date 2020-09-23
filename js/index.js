@@ -7,6 +7,12 @@ $(document).ready(async function() {
         ].join('-')
         return current_date
     }
+    function get_date(date){
+        return [date.getFullYear(),
+            ((date.getMonth() + 1) > 9 ? '' : '0') + (date.getMonth() + 1),
+            (date.getDate() > 9 ? '' : '0') + date.getDate()
+        ].join('-')
+    }
 
 
     let $tasks = $('#all_tasks')
@@ -18,10 +24,13 @@ $(document).ready(async function() {
     let $save_button
 
     let $task_form
+    let $new_task_button = $('#create_task')
 
     let click_counter = {}
+    let max_id_count = 0
 
     let current_date
+    let current_user
 
     await $.ajax({
         url: '/tasks/get',
@@ -30,9 +39,15 @@ $(document).ready(async function() {
         contentType: 'application/json',
         success:function (data) {
             let tasks_info = data['tasks']
+            current_user = data['user']
 
 
-            for(const task of tasks_info){
+            for(let task of tasks_info){
+                max_id_count  += 1
+
+                task['end_date'] = new Date(task['end_date'])
+                task['creation_date'] = new Date(task['creation_date'])
+                task['update_date'] = new Date(task['update_date'])
                 let responsible_user
                 let creator
                 for(const user of data['users']){
@@ -102,7 +117,7 @@ $(document).ready(async function() {
                     <option value="Низкий" ${select_priority[2]}>Низкий</option>
                 </select>
 
-                <input name="end_date" value="${task['end_date'].slice(0, 10)}" min="${current_date}" type="date" class="input inline_input input_disabled un_focused" id="end_date_${task['id']}" required>
+                <input name="end_date" value="${get_date(task['end_date'])}" min="${current_date}" type="date" class="input inline_input input_disabled un_focused" id="end_date_${task['id']}" required>
 
                 <input name="responsible_user_name" value="${responsible_user['name']+' '+responsible_user['surname']}" type="text" class="input inline_input input_disabled un_focused  disabled_forever" id="responsible_user_${task['id']}" >
 
@@ -131,8 +146,8 @@ $(document).ready(async function() {
             </div>
 
             <div class="left_inputs">
-                <input name="creation_date" value="${task['creation_date'].slice(0, 10)}" type="date" class="input left_input un_focused input_disabled  disabled_forever" id="creation_date_${task['id']}">
-                <input name="update_date" value="${task['update_date'].slice(0, 10)}" type="date" class="input left_input un_focused input_disabled  disabled_forever" id="update_date_${task['id']}">
+                <input name="creation_date" value="${get_date(task['creation_date'])}" type="date" class="input left_input un_focused input_disabled  disabled_forever" id="creation_date_${task['id']}">
+                <input name="update_date" value="${get_date(task['update_date'])}" type="date" class="input left_input un_focused input_disabled  disabled_forever" id="update_date_${task['id']}">
                 <input name="creator_name" value="${creator['name']+' '+creator['surname']}" type="text" class="input left_input un_focused input_disabled  disabled_forever" id="creator_${task['id']}">
                 <input name="responsible_user_email" value="${responsible_user['login']}" type="email" class="input left_input un_focused input_disabled" id="user_email_${task['id']}" required>
                 <textarea name="description" class="input description left_input un_focused input_disabled" id="description_${task['id']}" rows="2" cols="30" required>${task['description']}</textarea>
@@ -162,6 +177,87 @@ $(document).ready(async function() {
         }
     })
 
+    $new_task_button.on('click', function(event){
+        max_id_count += 1
+        $tasks.prepend(`<div id="task_${max_id_count}" class="task task_start">
+        <form id="form_task_${max_id_count}" class="task_form">
+        <div class="inline_parameters">
+
+            <div class="inline_labels">
+                <label for="title_${max_id_count}" class="inline_label">Заголовок</label>
+                <label for="priority_${max_id_count}" class="inline_label">Приоритет</label>
+                <label for="end_date_${max_id_count}" class="inline_label">Дата окончания</label>
+                <label for="user_${max_id_count}" class="inline_label">Ответсвенный</label>
+                <label for="status_${max_id_count}" class="inline_label">Статус</label>
+            </div>
+
+            <div class="inline_inputs">
+
+                <input name="title" type="text" class="input title inline_input input_disabled un_focused" id="title_${max_id_count}"  required>
+
+                <select name="priority" class="input inline_input input_disabled un_focused specific_select" id="priority_${max_id_count}" required>
+                    <option disabled>Выберите приоритет</option>
+                    <option value="Высокий">Высокий</option>
+                    <option value="Средний">Средний</option>
+                    <option value="Низкий">Низкий</option>
+                </select>
+
+                <input name="end_date"  min="${current_date}" type="date" class="input inline_input input_disabled un_focused" id="end_date_${max_id_count}" required>
+
+                <input name="responsible_user_name" type="text" class="input inline_input input_disabled un_focused  disabled_forever" id="responsible_user_${max_id_count}" >
+
+                <select name="state" class="input inline_input input_disabled un_focused specific_select" id="state_${max_id_count}" required>
+                    <option disabled>Выберите статус</option>
+                    <option value="К выполнению">К выполнению</option>
+                    <option value="Выполняется">Выполняется</option>
+                    <option value="Выполнена">Выполнена</option>
+                    <option value="Отменена">Отменена</option>
+                </select>
+
+                <button type="button" class="change_button">Редактировать</button>
+
+            </div>
+
+        </div>
+
+        <div class="left_parameters left_parameters_start">
+
+            <div class="left_labels">
+                <label for="creation_date_${max_id_count}" class="left_label">Дата создания</label>
+                <label for="update_date_${max_id_count}" class="left_label">Дата обновения</label>
+                <label for="creator_${max_id_count}" class="left_label">Создатель</label>
+                <label for="user_email_${max_id_count}" class="left_label">Почта ответсвенного</label>
+                <label for="description_${max_id_count}" class="left_label">Описание</label>
+            </div>
+
+            <div class="left_inputs">
+                <input name="creation_date" type="date" class="input left_input un_focused input_disabled  disabled_forever" id="creation_date_${max_id_count}">
+                <input name="update_date" type="date" class="input left_input un_focused input_disabled  disabled_forever" id="update_date_${max_id_count}">
+                <input name="creator_name" type="text" class="input left_input un_focused input_disabled  disabled_forever" id="creator_${max_id_count}">
+                <input name="responsible_user_email" type="email" class="input left_input un_focused input_disabled" id="user_email_${max_id_count}" required>
+                <textarea name="description" class="input description left_input un_focused input_disabled" id="description_${max_id_count}" rows="2" cols="30" required></textarea>
+            
+                <button type="submit" class="save_button" value="new ${max_id_count} creator ${current_user['id']}">Сохранить</button>
+
+            </div>
+            
+        </div>
+        <div class="request_result left_parameters_start">
+            <span class="error error_start">У вас нет подчинённого с такой почтой</span>
+        </div>
+
+        </form>
+    </div>`)
+
+        $input = $('.input')
+        $change_button = $('.change_button')
+
+        $task_form = $('.task_form')
+        $save_button = $('.save_button')
+
+        $inline_input = $('.inline_input')
+        $left_input = $('.left_input')
+    })
 
 
     $input.on('focus', function (event) {
@@ -174,7 +270,9 @@ $(document).ready(async function() {
         $(this).addClass('un_focused')
     })
 
-    $change_button.on('click', function () {
+    $(document).on('click', '.change_button',function () {
+        console.log('change')
+        console.log($inline_input.length)
         let task = $(this).parents('.task')
         let left_parameters_div = $(this).parents('.inline_parameters').siblings('.left_parameters')
         let request_result = $(this).parents('.inline_parameters').siblings('.request_result')
@@ -220,7 +318,8 @@ $(document).ready(async function() {
         click_counter[$(this).val()] += 1
     })
 
-    $task_form.on('submit', function(e){
+    $(document).on('submit', '.task_form', function(e){
+        console.log('save')
         e.preventDefault()
         let $save_button = $(this).children('.left_parameters').children('.left_inputs').children('.save_button')
         let $error = $(this).children('.request_result').children('.error')
@@ -230,20 +329,24 @@ $(document).ready(async function() {
             $error.addClass('error_inactive')
         }
 
-        let new_update_date = get_current_date(0)
-
-        let old = $save_button.val().slice(0, 3) === 'old'
-        let creator_id = $save_button.val().slice(-1)
-        console.log(creator_id)
-
         let details = $(this).serialize()
+
+        let task_id = parseInt(($save_button.val().slice(4,5)))
+        let old = $save_button.val().slice(0, 3) === 'old'
+        if(!old){
+            $save_button.val('old' + $save_button.val().slice(3))
+        }
+        console.log($save_button.val())
+        let creator_id = $save_button.val().slice(-1)
+
+
 
 
 
         $.ajax({
             url: '/task/submit',
             method: 'GET',
-            data: details+'&old='+JSON.stringify(old)+'&creator_id='+JSON.stringify(creator_id)+'&new_update_date='+JSON.stringify(new_update_date),
+            data: details+'&old='+JSON.stringify(old)+'&creator_id='+JSON.stringify(creator_id)+'&task_id='+JSON.stringify(task_id),
             dataType: 'json',
             contentType: 'application/json',
             success: function (data) {
@@ -251,17 +354,24 @@ $(document).ready(async function() {
                 if(data['result'] === 'not_existing_user_email'){
                     $error.text('Пользователя с такой почтой не существует')
                     $error.removeClass('error_start')
+                    $error.removeClass('error_inactive')
                     $error.addClass('error_active')
                 }
                 if(data['result'] === 'not_existing_user_director_connection'){
                     $error.text('У вас нет подчинённого с такой почтой')
                     $error.removeClass('error_start')
+                    $error.removeClass('error_inactive')
                     $error.addClass('error_active')
+                }
+                if(data['result'] === 'successful'){
+                    alert('Данные успешно сохранены')
                 }
             }
         })
 
     })
+
+
 
 
 })

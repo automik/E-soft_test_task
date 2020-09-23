@@ -8,6 +8,13 @@ const url = require('url')
 const hostname = '127.0.0.1'
 const port = 1002
 
+function get_date(date){
+    return [date.getFullYear(),
+        ((date.getMonth() + 1) > 9 ? '' : '0') + (date.getMonth() + 1),
+        (date.getDate() > 9 ? '' : '0') + date.getDate()
+    ].join('-')
+}
+
 const server = http.createServer()
 let session ={'user_id':0, 'user':NaN}
 server.on('request', async function(req, res) {
@@ -70,24 +77,35 @@ server.on('request', async function(req, res) {
             await db_config.select('users', {'login': url_data['responsible_user_email']}, function(result) {
                 user = result
             })
+            let responsible_user_id = user[0]['id']
+            let task_id = url_data['task_id']
             if(user.length === 0){
                 res.write(JSON.stringify({'result': 'not_existing_user_email'}))
                 res.end()
             } else{
                 let connection =[]
-                await db_config.select('user_director', {'user_id':user[0]['id'], 'director_id':parseInt(url_data['creator_id'].slice(1, -1))}, function(result){
+                await db_config.select('user_director', {'user_id':responsible_user_id, 'director_id':parseInt(url_data['creator_id'].slice(1, -1))}, function(result){
                     connection = result
                 })
                 if(connection.length === 0){
                     res.write(JSON.stringify({'result': 'not_existing_user_director_connection'}))
                     res.end()
                 } else {
-                    await db_config.update('tasks', {
-                        'title': url_data['title'], 'priority': url_data['priority'],
-                        'end_date': url_data['end_date'], 'update_date': url_data['new_update_date'].slice(1, -1),
-                        'state': url_data['state'], 'description': url_data['description'],
-                        'responsible_user_id': user[0]['id']
-                    }, {})
+                    let current_date = get_date(new Date(Date.now()))
+                    let old = url_data['old'] === 'true'
+                    if(old) {
+                        await db_config.update('tasks', {
+                            'title': url_data['title'], 'priority': url_data['priority'],
+                            'end_date': url_data['end_date'], 'update_date': current_date,
+                            'state': url_data['state'], 'description': url_data['description'],
+                            'responsible_user_id': responsible_user_id
+                        }, {'id':task_id})
+                    } else{
+                        await db_config.insert('tasks', {'title': url_data['title'], 'priority': url_data['priority'],
+                            'end_date': url_data['end_date'], 'update_date': current_date, 'creation_date': current_date,
+                            'state': url_data['state'], 'description': url_data['description'], 'creator_id': session['user']['id'],
+                            'responsible_user_id': responsible_user_id})
+                    }
                     res.write(JSON.stringify({'result': 'successful'}))
                     res.end()
                 }
