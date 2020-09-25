@@ -132,15 +132,24 @@ $(document).ready(async function() {
                         if(typeof current_group === "number"){
                             $tasks.append(`
                             <div class="single_group" id="group_id_${group_count}"> 
-                                <span class="group_name">${responsible_user['name'] + ' ' + responsible_user['surname']}</span>
+                                <span class="group_name">Ответственный пользователь: ${responsible_user['name'] + ' ' + responsible_user['surname']}</span>
                             </div>
                         `)
                         } else{
-                            $tasks.append(`
+                            if(group_type === 'update_date'){
+                                $tasks.append(`
                             <div class="single_group" id="group_id_${group_count}"> 
-                                <span class="group_name">${get_date(current_group)}</span>
+                                <span class="group_name">Дата обновления: ${get_date(current_group)}</span>
                             </div>
                         `)
+                            } else{
+                                $tasks.append(`
+                            <div class="single_group" id="group_id_${group_count}"> 
+                                <span class="group_name">Дата окончания: ${get_date(current_group)}</span>
+                            </div>
+                        `)
+                            }
+
                         }
 
                         $task_group = $(`#group_id_${group_count}`)
@@ -156,11 +165,11 @@ $(document).ready(async function() {
             <div class="inline_parameters ${additional_class_inline}">
     
                 <div class="inline_labels">
-                    <label for="title_${task['id']}" class="inline_label">Заголовок</label>
-                    <label for="priority_${task['id']}" class="inline_label">Приоритет</label>
-                    <label for="end_date_${task['id']}" class="inline_label">Дата окончания</label>
-                    <label for="user_${task['id']}" class="inline_label">Ответсвенный</label>
-                    <label for="state_${task['id']}" class="inline_label">Статус</label>
+                    <label for="title_${task['id']}" class="inline_label input_disabled">Заголовок</label>
+                    <label for="priority_${task['id']}" class="inline_label input_disabled">Приоритет</label>
+                    <label for="end_date_${task['id']}" class="inline_label input_disabled">Дата окончания</label>
+                    <label for="user_${task['id']}" class="inline_label input_disabled">Ответсвенный</label>
+                    <label for="state_${task['id']}" class="inline_label input_disabled">Статус</label>
                 </div>
     
                 <div class="inline_inputs">
@@ -192,11 +201,15 @@ $(document).ready(async function() {
             <div class="left_parameters left_parameters_start">
     
                 <div class="left_labels">
-                    <label for="creation_date_${task['id']}" class="left_label">Дата создания</label>
-                    <label for="update_date_${task['id']}" class="left_label">Дата обновения</label>
-                    <label for="creator_${task['id']}" class="left_label">Создатель</label>
-                    <label for="user_email_${task['id']}" class="left_label">Почта ответсвенного</label>
-                    <label for="description_${task['id']}" class="left_label">Описание</label>
+                    <label for="creation_date_${task['id']}" class="left_label input_disabled">Дата создания</label>
+                    <label for="update_date_${task['id']}" class="left_label input_disabled">Дата обновения</label>
+                    <label for="creator_${task['id']}" class="left_label input_disabled">Создатель</label>
+                    <label for="user_email_${task['id']}" class="left_label input_disabled">Почта ответсвенного</label>
+                    <label for="description_${task['id']}" class="left_label input_disabled">Описание</label>
+                    
+                    <label class="left_label input_disabled"></label>
+                    <label class="left_label input_disabled"></label>
+                    
                 </div>
     
                 <div class="left_inputs">
@@ -212,7 +225,17 @@ $(document).ready(async function() {
                 
             </div>
             <div class="request_result left_parameters_start">
-                <span class="error error_start">У вас нет подчинённого с такой почтой</span>
+            
+                <span class="result"></span>
+                <span class="result"></span>
+                <span class="result"></span>
+            
+                <span class="result error error_start">У вас нет подчинённого с такой почтой</span>
+            
+                <span class="result"></span>
+                <span class="result"></span>
+                <span class="result"></span>
+            
             </div>
     
             </form>
@@ -278,6 +301,10 @@ $(document).ready(async function() {
                 <label for="creator_${max_id_count}" class="left_label">Создатель</label>
                 <label for="user_email_${max_id_count}" class="left_label">Почта ответсвенного</label>
                 <label for="description_${max_id_count}" class="left_label">Описание</label>
+            
+                <label class="left_label input_disabled"></label>
+                <label class="left_label input_disabled"></label>
+                    
             </div>
 
             <div class="left_inputs">
@@ -293,7 +320,17 @@ $(document).ready(async function() {
             
         </div>
         <div class="request_result left_parameters_start">
+        
+            <span class="result"></span>
+            <span class="result"></span>
+            <span class="result"></span>
+        
             <span class="error error_start">У вас нет подчинённого с такой почтой</span>
+        
+            <span class="result"></span>
+            <span class="result"></span>
+            <span class="result"></span>
+            
         </div>
 
         </form>

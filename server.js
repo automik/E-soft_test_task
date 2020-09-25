@@ -186,7 +186,9 @@ server.on('request', async function(req, res) {
                 } else{
                     session.user_id = user[0].id
                     session.user = user[0]
+                    res.writeHead(200, {'Set-Cookie': `user_login=1; Path=/`})
                     res.write(JSON.stringify({'result': 'successful'}))
+                    console.log(res)
                     res.end()
                 }
             }
