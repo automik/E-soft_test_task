@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/automik/E-soft_test_task#readme",
   "dependencies": {
+    "bcrypt": "^5.0.0",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
     "jquery": "^3.5.1",
