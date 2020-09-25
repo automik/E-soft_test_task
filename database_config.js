@@ -47,26 +47,34 @@ async function insert(table, dict){
     await query(sql)
 }
 
-async function select(table, dict, callback,  lim){
+async function select(table, condition_dict, callback, order,  lim){
     let conditions = ''
-    for (const [key, value] of Object.entries(dict)) {
+    for (const [key, value] of Object.entries(condition_dict)) {
         if(typeof(value) === 'string'){
             conditions += key + " = '" + value + "' AND "
         }else {
             conditions += key + " = " + value + " AND "
         }
     }
+    if(order === undefined||order['group_type'] === undefined){
+        order = ''
+    } else{
+        order = 'ORDER BY ' + order['group_type']
+    }
+    if(lim === undefined){
+        lim = ''
+    } else{
+        lim = 'LIMIT ' + lim
+    }
+
     let sql
     if(conditions.length > 0){
         conditions = conditions.slice(0, -5)
-        if(lim === undefined) {
-            sql = `SELECT * FROM ${table} WHERE ${conditions};`
-        } else{
-            sql = `SELECT * FROM ${table} WHERE ${conditions} LIMIT ${lim};`
-        }
+            sql = `SELECT * FROM ${table} WHERE ${conditions} ${order} ${lim};`
     } else{
-        sql = `SELECT * FROM ${table};`
+        sql = `SELECT * FROM ${table} ${order} ${lim};`
     }
+
     console.log(sql)
 
     let res = await query(sql)
@@ -130,10 +138,10 @@ function init_db(){
                                     'end_date': 'date', 'creation_date': 'date', 'update_date': 'date', 'priority': 'varchar(7)',
                                     'state': 'varchar(12)', 'creator_id': 'int' ,  'FOREIGN KEY (creator_id)': 'REFERENCES users(id)',
                                     'responsible_user_id': 'int', 'FOREIGN KEY (responsible_user_id)': 'REFERENCES users(id)'})
-    insert('users', {'name': 'we', 'surname': 'YEET', 'patronymic': 'ku', 'login': 'test0@mail.ru', 'password': 'qwerty1234'})
-    insert('users', {'name': 'we', 'surname': 'YEET', 'patronymic': 'ku', 'login': 'test1@mail.ru', 'password': 'qwerty1234'})
+    insert('users', {'name': 'we', 'surname': 'YEET', 'patronymic': 'ku', 'login': 'test0@mail.ru', 'password': '$2b$10$q51t/u77suSRwS7IFVykMuxeqBgaVhiP0uTekl2I1Vz73nYq778zu'})
+    insert('users', {'name': 'we', 'surname': 'YEET', 'patronymic': 'ku', 'login': 'test1@mail.ru', 'password': '$2b$10$q51t/u77suSRwS7IFVykMuxeqBgaVhiP0uTekl2I1Vz73nYq778zu'})
     insert('tasks', {'title':'TEST_TASK', 'description':'just try to test this shit', 'end_date':'2020-09-24',
-                               'creation_date':'2020-09-17', 'update_date':'2020-09-21', 'priority':'Высокий',
+                               'creation_date':'2020-09-17', 'update_date':'2020-09-30', 'priority':'Высокий',
                                'state':'Выполняется', 'creator_id':1, 'responsible_user_id':2})
     insert('user_director', {'director_id': 1, 'user_id': 2})
 }

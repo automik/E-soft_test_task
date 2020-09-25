@@ -1,3 +1,51 @@
+#group{
+    height: 60px;
+    width: 400px;
+
+    display: inline-block;
+
+    background: #f6f6f6;
+    border: 2px solid #AAAAAA;
+    border-radius: 10px;
+
+    position: relative;
+    top: -20px;
+    left: 10px;
+
+    /*position: absolute;*/
+    /*top: 20px;*/
+    /*left: 310px;*/
+}
+
+#group_container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+
+}
+
+#group_label{
+    font-size: 20px;
+    height: 25px;
+}
+
+#group_type{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.change_button{
+    height: 35px;
+    width: 200px;
+    font-size: 20px;
+    margin: 5px 0 2px 10px;
+}
+
 .task{
     width: 1500px;
 
@@ -11,8 +59,20 @@
     justify-content: space-around;
 }
 
+@keyframes start_task_unfold {
+    from{
+        height: 0;
+        opacity: 0;
+    }
+    to{
+        height: 80px;
+        opacity: 100%;
+    }
+}
+
 .task_start{
     height:80px;
+    animation: 1s ease start_task_unfold;
 }
 
 @keyframes fold {
@@ -41,6 +101,14 @@
     animation-iteration-count: 1;
 }
 
+.task_expired{
+    background: #e0d0d0;
+}
+
+.task_done{
+    background: #d0e0d0;
+}
+
 .task_form{
     width:100%
 }
@@ -52,13 +120,22 @@
     background: #f6f6f6;
     border-bottom: 2px solid #AAAAAA;
     border-radius: 10px;
-
+    margin: 0;
 
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+
+    animation: 1s ease start_task_unfold;
 }
 
+.inline_inputs_expired{
+    background: #f6e6e6;
+}
+
+.inline_inputs_done{
+    background: #e6f6e6;
+}
 
 .left_parameters{
     width: 100%;
@@ -122,12 +199,53 @@
     /*transition: top;*/
 }
 
+@keyframes hide_request_result {
+    from {
+        opacity: 100%;
+        top: -25px;
+    }
+    to {
+        opacity: 0;
+        top: -100px;
+    }
+}
+
+.request_result_folded{
+    opacity: 0;
+    /*display: none;*/
+
+    animation: 1s ease;
+    animation-name: hide_request_result;
+    animation-iteration-count: 1;
+    top: -999999px;
+}
+
+@keyframes show_request_result {
+    from{
+        opacity: 0;
+        top: -100px;
+    }
+    to{
+        opacity: 100%;
+        top: -25px;
+    }
+}
+
+.request_result_un_folded{
+    opacity: 100%;
+
+    animation: 1s ease;
+    animation-name: show_request_result;
+    animation-iteration-count: 1;
+    /*transition: top;*/
+}
+
 .request_result{
     width: 100%;
     height: 20px;
     display: block;
     position: relative;
-    top:-20px;
+    top:-25px;
     pointer-events: none
 }
 /*#buttons{*/
@@ -156,6 +274,17 @@
 /*    display: inline-block;*/
 /*    float:right;*/
 /*}*/
+#create_task{
+    display: inline-block;
+    position: relative;
+    font-size: 30px;
+    height: 64px;
+    width: 250px;
+
+    margin: 10px 0 0 20px;
+}
+
+
 .inline_inputs, .inline_labels, .left_inputs, .left_labels{
     display: flex;
     flex-direction: row;
@@ -223,12 +352,6 @@
     border-radius: 5px;
 }
 
-.change_button{
-    height: 35px;
-    width: 200px;
-    font-size: 20px;
-    margin: 5px 0 2px 10px;
-}
 
 .save_button{
     width: 200px;
@@ -240,17 +363,16 @@
 .inline_label, .left_label{
     font-size: 20px;
     height: 20px;
-    width: 244px;
-    min-width: 150px;
-    margin: 5px 0 2px 10px;
+    min-width: 140px;
+    margin: 5px 104px 2px 10px;
     position: relative;
     left: 10px;
     display: inline;
 }
 
 .left_label{
-    width: 204px;
     min-width: 204px;
+    margin: 5px 0px 2px 10px;
 }
 /*.start_label{*/
 /*    left: 20px;*/

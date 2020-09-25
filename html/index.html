@@ -6,11 +6,20 @@
     <link type="text/css" rel="stylesheet" href="../css/index.css">
 </head>
 <body>
-<a href="/authorization">authorization</a>
 <button type="button" id="create_task">Новая задача</button>
+<div id="group">
+    <div id="group_container">
+        <span id="group_label">Выберите тип группировки</span>
+        <div id="group_type">
+            <button id="end_date_group" class="group_button" value="end_date">По дате завершения</button>
+            <button id="responsible_group" class="group_button" value="responsible_user_id">По ответственным</button>
+            <button id="default_update_date" class="group_button" value="update_date">Стандартная</button>
+        </div>
+    </div>
+</div>
 <div id="all_tasks">
 
-    <div id="task_" class="task task_start">
+    <div id="task_" class="task task_start change_button">
         <form id="form_task_" class="task_form">
         <div class="inline_parameters">
 
@@ -45,7 +54,6 @@
                     <option value="Отменена">Отменена</option>
                 </select>
 
-                <button type="button" class="change_button" value="1">Редактировать</button>
 
             </div>
 
@@ -70,10 +78,11 @@
 
                 <button type="submit" class="save_button">Сохранить</button>
             </div>
-            <div class="request_result left_parameters_start">
-                <span class="error error_start">У вас нет подчинённого с такой почтой</span>
-            </div>
 
+
+        </div>
+        <div class="request_result left_parameters_start">
+            <span class="error error_start">У вас нет подчинённого с такой почтой</span>
         </div>
         </form>
     </div>

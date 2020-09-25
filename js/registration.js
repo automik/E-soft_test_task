@@ -37,8 +37,8 @@ $(document).ready(function() {
         let details = $(this).serializeArray()
         $.ajax({
             url: '/registration/submit',
-            method: 'GET',
-            data: details,
+            method: 'POST',
+            data:  JSON.stringify(details),
             dataType: 'json',
             contentType: 'application/json',
             success:function (data){

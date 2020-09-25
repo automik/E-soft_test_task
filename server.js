@@ -1,6 +1,8 @@
 const http = require('http')
 const fs = require('fs')
 const db_config = require('./database_config')
+const bcrypt = require('bcrypt')
+const saltRounds = 10
 // const express = require('express')
 const url = require('url')
 
@@ -16,13 +18,15 @@ function get_date(date){
 }
 
 const server = http.createServer()
-let session ={'user_id':0, 'user':NaN}
+let session ={'user_id':0, 'user':null, 'group_type': null}
+let group_type = 'update_date'
 server.on('request', async function(req, res) {
     let current_url = url.parse(req.url, true)
     console.log(req.method, req.url)
     // console.log(session)
     let url_data = current_url.query
     let user = []
+    let body = []
     switch (current_url.pathname) {
 
         case '/':
@@ -57,59 +61,79 @@ server.on('request', async function(req, res) {
 
         case '/tasks/get':
             let tasks
-            await db_config.select('tasks', {}, function(result) {
-                tasks = result
-            })
+            console.log(group_type)
+            await db_config.select('tasks', {},  (result) => {tasks = result}, {group_type})
             let users
             await db_config.select('users', {}, function(result) {
                 users = result
             })
-            res.write(JSON.stringify({'tasks': tasks, 'users':users, 'user':session['user']}))
+            res.write(JSON.stringify({'tasks': tasks, 'users':users, 'user':session['user'], 'group_type':group_type}))
             res.end()
             break
 
+        case '/task/change_group_type':
+            url_data = current_url.query
+            group_type = url_data['group_type']
+            console.log(group_type)
+            res.write(JSON.stringify({'result': 'successful'}))
+            res.end()
+            break
 
         case '/task/submit':
-            url_data = current_url.query
-            user = []
-            console.log(url_data)
-            console.log(parseInt(url_data['creator_id'].slice(1, -1)))
-            await db_config.select('users', {'login': url_data['responsible_user_email']}, function(result) {
-                user = result
+            body = []
+            await req.on('data', await function (chunk) {
+                body.push(chunk)
             })
-            let responsible_user_id = user[0]['id']
-            let task_id = url_data['task_id']
-            if(user.length === 0){
-                res.write(JSON.stringify({'result': 'not_existing_user_email'}))
-                res.end()
-            } else{
-                let connection =[]
-                await db_config.select('user_director', {'user_id':responsible_user_id, 'director_id':parseInt(url_data['creator_id'].slice(1, -1))}, function(result){
-                    connection = result
-                })
-                if(connection.length === 0){
-                    res.write(JSON.stringify({'result': 'not_existing_user_director_connection'}))
-                    res.end()
-                } else {
-                    let current_date = get_date(new Date(Date.now()))
-                    let old = url_data['old'] === 'true'
-                    if(old) {
-                        await db_config.update('tasks', {
-                            'title': url_data['title'], 'priority': url_data['priority'],
-                            'end_date': url_data['end_date'], 'update_date': current_date,
-                            'state': url_data['state'], 'description': url_data['description'],
-                            'responsible_user_id': responsible_user_id
-                        }, {'id':task_id})
-                    } else{
-                        await db_config.insert('tasks', {'title': url_data['title'], 'priority': url_data['priority'],
-                            'end_date': url_data['end_date'], 'update_date': current_date, 'creation_date': current_date,
-                            'state': url_data['state'], 'description': url_data['description'], 'creator_id': session['user']['id'],
-                            'responsible_user_id': responsible_user_id})
-                    }
-                    res.write(JSON.stringify({'result': 'successful'}))
-                    res.end()
+            req.on('end', async function () {
+                body = Buffer.concat(body).toString()
+                let data = JSON.parse(body)
+
+                let parsed_data = {}
+
+                for(let single_data of data){
+                    parsed_data[single_data['name']] = single_data['value']
                 }
-            }
+
+                user = []
+                await db_config.select('users', {'login': parsed_data['responsible_user_email']}, function(result) {
+                    user = result
+                })
+                if(user.length === 0){
+                    res.write(JSON.stringify({'result': 'not_existing_user_email'}))
+                    res.end()
+                } else{
+                    let responsible_user_id = user[0]['id']
+                    let task_id = parsed_data['task_id']
+                    let connection =[]
+                    await db_config.select('user_director', {'user_id':responsible_user_id, 'director_id':parseInt(parsed_data['creator_id'])}, function(result){
+                        connection = result
+                    })
+                    if(connection.length === 0){
+                        res.write(JSON.stringify({'result': 'not_existing_user_director_connection'}))
+                        res.end()
+                    } else {
+                        let current_date = get_date(new Date(Date.now()))
+                        if(parsed_data['old']) {
+                            await db_config.update('tasks', {
+                                'title': parsed_data['title'], 'priority': parsed_data['priority'],
+                                'end_date': parsed_data['end_date'], 'update_date': current_date,
+                                'state': parsed_data['state'], 'description': parsed_data['description'],
+                                'responsible_user_id': responsible_user_id
+                            }, {'id':task_id})
+                        } else{
+                            await db_config.insert('tasks', {'title': parsed_data['title'], 'priority': parsed_data['priority'],
+                                'end_date': parsed_data['end_date'], 'update_date': current_date, 'creation_date': current_date,
+                                'state': parsed_data['state'], 'description': parsed_data['description'], 'creator_id': session['user']['id'],
+                                'responsible_user_id': responsible_user_id})
+                        }
+                        res.write(JSON.stringify({'result': 'successful'}))
+                        res.end()
+                    }
+                }
+
+
+            });
+
             break
 
 
@@ -146,18 +170,17 @@ server.on('request', async function(req, res) {
         case '/authorization/submit':
             url_data = current_url.query
             user = []
-            await db_config['select']('users', {'login':url_data['login']}, await function(result) {
+
+            await db_config.select('users', {'login':url_data['login']}, function(result) {
                 user = result
             })
+
             if(user.length === 0){
                 res.write(JSON.stringify({'result': 'wrong_email'}))
                 res.end()
             } else{
-                user = []
-                await db_config['select']('users', {'login':url_data['login'], 'password': url_data['password']}, function(result){
-                    user = result
-                })
-                if(user.length === 0){
+                let password_compare_result = await bcrypt.compare(url_data['password'], user[0]['password'])
+                if(!password_compare_result){
                     res.write(JSON.stringify({'result': 'wrong_password'}))
                     res.end()
                 } else{
@@ -201,9 +224,21 @@ server.on('request', async function(req, res) {
 
 
         case '/registration/submit':
-            url_data = current_url.query
+            body = []
+            await req.on('data', await function (chunk) {
+                body.push(chunk)
+            })
+            req.on('end', async function () {
+                body = Buffer.concat(body).toString()
+                let data = JSON.parse(body)
+
+                let parsed_data = {}
+
+                for (let single_data of data) {
+                    parsed_data[single_data['name']] = single_data['value']
+                }
             user = []
-            await db_config['select']('users', {'login':url_data['login']}, await function(result) {
+            await db_config.select('users', {'login':parsed_data['login']}, function(result) {
                 user = result
             })
             if(user.length > 0){
@@ -211,20 +246,30 @@ server.on('request', async function(req, res) {
                 res.end()
             } else{
                 let director = []
-                await db_config['select']('users', {'login':url_data['director_login']}, await function(result) {
+
+
+
+                await db_config.select('users', {'login':parsed_data['director_login']}, function(result) {
                     director = result
                 })
-                if(director.length === 0){
+                if(director.length === 0&&(!parsed_data['director_login'] === parsed_data['login'])){
                     res.write(JSON.stringify({'result': 'not_existing_director'}))
                     res.end()
                 } else{
-                    await db_config.insert('users', {'name': url_data['name'], 'surname': url_data['surname'], 'patronymic': url_data['patronymic'],
-                        'login': url_data['login'], 'password': url_data['password']})
-                    await db_config['select']('users', {'login':url_data['login']}, await function(result) {
+                    let password = await bcrypt.hash(parsed_data['password'], saltRounds)
+                    await db_config.insert('users', {'name': parsed_data['name'], 'surname': parsed_data['surname'], 'patronymic': parsed_data['patronymic'],
+                        'login': parsed_data['login'], 'password': password})
+                    await db_config.select('users', {'login':parsed_data['login']},  function(result) {
                         user = result
                     })
+                    if(parsed_data['director_login'] === parsed_data['login']){
+                        director = user
+                    }
                     if(director.length>0){
-                        await db_config.insert('user_director', {'director_id': director[0].id, 'user_id': user[0].id})
+                        if(!(director[0].id === user[0].id)){
+                            await db_config.insert('user_director', {'director_id': director[0].id, 'user_id': user[0].id})
+                        }
+                        await db_config.insert('user_director', {'director_id': user[0].id, 'user_id': user[0].id})
                     }
                     session.user_id = user[0].id
                     session.user = user[0]
@@ -232,6 +277,8 @@ server.on('request', async function(req, res) {
                     res.end()
                 }
             }
+            })
+
             break
 
 
