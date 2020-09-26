@@ -1,6 +1,15 @@
+.buttons{
+    width: 75%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
 #group{
-    height: 60px;
-    width: 400px;
+    height: 100px;
+    width: 45%;
 
     display: inline-block;
 
@@ -9,8 +18,6 @@
     border-radius: 10px;
 
     position: relative;
-    top: -20px;
-    left: 10px;
 
     /*position: absolute;*/
     /*top: 20px;*/
@@ -28,6 +35,8 @@
 }
 
 #group_label{
+    text-align: center;
+    width: 75%;
     font-size: 20px;
     height: 25px;
 }
@@ -37,6 +46,10 @@
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+}
+
+.group_button{
+    width: 30%;
 }
 
 .change_button{
@@ -298,10 +311,9 @@
     display: inline-block;
     position: relative;
     font-size: 30px;
-    height: 64px;
-    width: 250px;
+    height: 40%;
+    width: 20%;
 
-    margin: 10px 0 0 20px;
 }
 
 
@@ -312,32 +324,33 @@
 }
 
 .inline_labels, .left_labels{
-    height: 50px;
+    height: 70px;
 }
 
 .inline_input, .left_input{
     display:inline-block;
-    font-size: 20px;
+    font-size: 25px;
     height: 30px;
     min-height: 30px;
-    width: 17%;
+    width: 18%;
     padding: 0;
     margin: 0 0 10px 0;
 }
 
 .left_input{
-    width: 12%;
+    width: 13%;
+    font-size: 22px;
 }
 
 .specific_select{
-    width: 18%;
+    width: 19%;
     height: 34px;
 }
 
 .description{
-    font-size: 18px;
+    font-size: 22px;
     width: 29%;
-    height: 45px;
+    height: 55px;
     overflow: auto;
 }
 
@@ -374,15 +387,16 @@
 
 
 .save_button{
-    width: 14%;
+    width: 13%;
     height: 50px;
     font-size: 20px;
     margin: 0 0 2px 0;
 }
 
 .inline_label, .left_label{
-    font-size: 20px;
-    height: 40px;
+    word-wrap: break-word;
+    font-size: 25px;
+    height: 50px;
     width: 17%;
     position: relative;
     display: inline;
@@ -390,8 +404,10 @@
 }
 
 .left_label{
+    font-size: 22px;
     width: 12%;
-    margin: 0 0 10px 0;
+    margin: 0 0 0 0;
+    padding: 2px 2px 2px 2px;
 }
 /*.start_label{*/
 /*    left: 20px;*/

@@ -138,8 +138,7 @@ $(document).ready(async function() {
                         } else{
                             if(group_type === 'update_date'){
                                 $tasks.append(`
-                            <div class="single_group" id="group_id_${group_count}"> 
-                                <span class="group_name">Дата обновления: ${get_date(current_group)}</span>
+                            <div id="group_id_${group_count}"> 
                             </div>
                         `)
                             } else{

@@ -7,8 +7,8 @@ const saltRounds = 10
 const url = require('url')
 
 
-const hostname = '127.0.0.1'
-const port = 1002
+const hostname = '192.168.1.35'
+const port = 3000
 
 function get_date(date){
     return [date.getFullYear(),
@@ -17,15 +17,35 @@ function get_date(date){
     ].join('-')
 }
 
+function parseCookies (request) {
+    let list = {}, rc = request.headers.cookie
+
+    rc && rc.split(';').forEach(function( cookie ) {
+        let parts = cookie.split('=')
+        list[parts.shift().trim()] = decodeURI(parts.join('='))
+    })
+
+    return list
+}
+
+
 const server = http.createServer()
-let session ={'user_id':0, 'user':null, 'group_type': null}
 let group_type = 'update_date'
 server.on('request', async function(req, res) {
     let current_url = url.parse(req.url, true)
     console.log(req.method, req.url)
     // console.log(session)
     let url_data = current_url.query
+    let session ={'user_id':0, 'user':null, 'group_type': null}
+    let cookies = parseCookies (req)
     let user = []
+    if('user_login' in cookies) {
+        await db_config.select('users', {'login': cookies['user_login']}, function (result) {
+            user = result[0]
+        })
+        session.user = user
+        session.user_id = user.id
+    }
     let body = []
     switch (current_url.pathname) {
 
@@ -61,7 +81,7 @@ server.on('request', async function(req, res) {
 
         case '/tasks/get':
             let tasks
-            console.log(group_type)
+            console.log(cookies)
             await db_config.select('tasks', {},  (result) => {tasks = result}, {group_type})
             let users
             await db_config.select('users', {}, function(result) {
@@ -186,9 +206,8 @@ server.on('request', async function(req, res) {
                 } else{
                     session.user_id = user[0].id
                     session.user = user[0]
-                    res.writeHead(200, {'Set-Cookie': `user_login=1; Path=/`})
+                    res.writeHead(200, {'Set-Cookie': `user_login=${user[0]['login']}; Path=/`})
                     res.write(JSON.stringify({'result': 'successful'}))
-                    console.log(res)
                     res.end()
                 }
             }
