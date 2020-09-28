@@ -1,10 +1,10 @@
 const mysql = require('mysql')
 
 const con = mysql.createConnection({
-    host: "localhost",
-    user: "admin",
-    password: "qwerty1234",
-    database: "node_database"
+    host: "sql12.freemysqlhosting.net",
+    user: "sql12367791",
+    password: "wYcY4xbqkQ",
+    database: "sql12367791"
 })
 
 function query(sql){
@@ -135,14 +135,14 @@ function init_db(){
                                                     'director_id': 'int', 'FOREIGN KEY (director_id)': 'REFERENCES users(id)',
                                                     'user_id': 'int', 'FOREIGN KEY (user_id)': 'REFERENCES users(id)'})
     create_table('tasks', {'id': 'int AUTO_INCREMENT PRIMARY KEY', 'title': 'varchar(150)', 'description': 'text',
-                                    'end_date': 'date', 'creation_date': 'date', 'update_date': 'date', 'priority': 'varchar(7)',
-                                    'state': 'varchar(12)', 'creator_id': 'int' ,  'FOREIGN KEY (creator_id)': 'REFERENCES users(id)',
+                                    'end_date': 'date', 'creation_date': 'date', 'update_date': 'date', 'priority': 'varchar(10)',
+                                    'state': 'varchar(20)', 'creator_id': 'int' ,  'FOREIGN KEY (creator_id)': 'REFERENCES users(id)',
                                     'responsible_user_id': 'int', 'FOREIGN KEY (responsible_user_id)': 'REFERENCES users(id)'})
     insert('users', {'name': 'we', 'surname': 'YEET', 'patronymic': 'ku', 'login': 'test0@mail.ru', 'password': '$2b$10$q51t/u77suSRwS7IFVykMuxeqBgaVhiP0uTekl2I1Vz73nYq778zu'})
     insert('users', {'name': 'we', 'surname': 'YEET', 'patronymic': 'ku', 'login': 'test1@mail.ru', 'password': '$2b$10$q51t/u77suSRwS7IFVykMuxeqBgaVhiP0uTekl2I1Vz73nYq778zu'})
     insert('tasks', {'title':'TEST_TASK', 'description':'just try to test this shit', 'end_date':'2020-09-24',
-                               'creation_date':'2020-09-17', 'update_date':'2020-09-30', 'priority':'Высокий',
-                               'state':'Выполняется', 'creator_id':1, 'responsible_user_id':2})
+                               'creation_date':'2020-09-17', 'update_date':'2020-09-30', 'priority':'high',
+                               'state':'in progress', 'creator_id':1, 'responsible_user_id':2})
     insert('user_director', {'director_id': 1, 'user_id': 2})
 }
 

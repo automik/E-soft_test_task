@@ -1,5 +1,5 @@
 .buttons{
-    width: 75%;
+    width: 95%;
 
     display: flex;
     flex-direction: row;
@@ -9,7 +9,7 @@
 
 #group{
     height: 100px;
-    width: 45%;
+    width: 60%;
 
     display: inline-block;
 
@@ -49,6 +49,7 @@
 }
 
 .group_button{
+    font-size: 20px;
     width: 30%;
 }
 
@@ -312,7 +313,7 @@
     position: relative;
     font-size: 30px;
     height: 40%;
-    width: 20%;
+    width: 15%;
 
 }
 
@@ -394,6 +395,7 @@
 }
 
 .inline_label, .left_label{
+    background: rgba(0,0,0,0);
     word-wrap: break-word;
     font-size: 25px;
     height: 50px;

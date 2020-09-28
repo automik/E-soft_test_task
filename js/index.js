@@ -85,40 +85,40 @@ $(document).ready(async function() {
                     let additional_class_inline = ''
                     let additional_class_task = ''
 
-                    if ((task['state'] === 'Выполняется') || (task['state'] === 'К выполнению')) {
+                    if ((task['state'] === 'in progress') || (task['state'] === 'to be done')) {
                         if (get_current_date(0) > task['end_date']) {
                             additional_class_inline = 'inline_inputs_expired'
                             additional_class_task = 'task_expired'
                         }
                     }
-                    if (task['state'] === 'Выполнена') {
+                    if (task['state'] === 'done') {
                         additional_class_inline = 'inline_inputs_done'
                         additional_class_task = 'task_done'
                     }
 
-                    if (task['priority'] === 'Высокий') {
+                    if (task['priority'] === 'high') {
                         select_priority = ['selected="selected"', '', '']
                     } else {
-                        if (task['priority'] === 'Средний') {
+                        if (task['priority'] === 'medium') {
                             select_priority = ['', 'selected="selected"', '']
                         } else {
-                            if (task['priority'] === 'Низкий') {
+                            if (task['priority'] === 'low') {
                                 select_priority = ['', '', 'selected="selected"']
                             }
                         }
                     }
 
-                    if (task['state'] === 'К выполнению') {
+                    if (task['state'] === 'to be done') {
                         select_state = ['selected="selected"', '', '', '']
                     } else {
-                        if (task['state'] === 'Выполняется') {
+                        if (task['state'] === 'in progress') {
                             select_state = ['', 'selected="selected"', '', '']
                         } else {
-                            if (task['state'] === 'Выполнена') {
+                            if (task['state'] === 'done') {
                                 select_state = ['', '', 'selected="selected"', '']
                             } else {
 
-                                if (task['state'] === 'Отменена') {
+                                if (task['state'] === 'canceled') {
                                     select_state = ['', '', '', 'selected="selected"']
                                 }
                             }
@@ -177,9 +177,9 @@ $(document).ready(async function() {
     
                     <select name="priority" class="input inline_input input_disabled un_focused specific_select ${disabled_list['priority']}" id="priority_${task['id']}" required>
                         <option disabled>Выберите приоритет</option>
-                        <option value="Высокий" ${select_priority[0]}>Высокий</option>
-                        <option value="Средний" ${select_priority[1]}>Средний</option>
-                        <option value="Низкий" ${select_priority[2]}>Низкий</option>
+                        <option value="high" ${select_priority[0]}>Высокий</option>
+                        <option value="medium" ${select_priority[1]}>Средний</option>
+                        <option value="low" ${select_priority[2]}>Низкий</option>
                     </select>
     
                     <input name="end_date" value="${get_date(task['end_date'])}" min="${get_date(get_current_date(2 * 7 * 24 * 60 * 60 * 1000))}" type="date" class="input inline_input input_disabled un_focused ${disabled_list['end_date']}" id="end_date_${task['id']}" required>
@@ -188,10 +188,10 @@ $(document).ready(async function() {
     
                     <select name="state" class="input inline_input input_disabled un_focused specific_select ${disabled_list['state']}" id="state_${task['id']}" required>
                         <option disabled>Выберите статус</option>
-                        <option value="К выполнению" ${select_state[0]}>К выполнению</option>
-                        <option value="Выполняется" ${select_state[1]}>Выполняется</option>
-                        <option value="Выполнена" ${select_state[2]}>Выполнена</option>
-                        <option value="Отменена" ${select_state[3]}>Отменена</option>
+                        <option value="to be done" ${select_state[0]}>К выполнению</option>
+                        <option value="in progress" ${select_state[1]}>Выполняется</option>
+                        <option value="done" ${select_state[2]}>Выполнена</option>
+                        <option value="canceled" ${select_state[3]}>Отменена</option>
                     </select>
                 </div>
     
@@ -259,11 +259,11 @@ $(document).ready(async function() {
         <div class="inline_parameters">
 
             <div class="inline_labels">
-                <label for="title_${max_id_count}" class="inline_label">Заголовок</label>
-                <label for="priority_${max_id_count}" class="inline_label">Приоритет</label>
-                <label for="end_date_${max_id_count}" class="inline_label">Дата окончания</label>
-                <label for="user_${max_id_count}" class="inline_label">Ответсвенный</label>
-                <label for="status_${max_id_count}" class="inline_label">Статус</label>
+                <label for="title_${max_id_count}" class="inline_label input_disabled">Заголовок</label>
+                <label for="priority_${max_id_count}" class="inline_label input_disabled">Приоритет</label>
+                <label for="end_date_${max_id_count}" class="inline_label input_disabled">Дата окончания</label>
+                <label for="user_${max_id_count}" class="inline_label input_disabled">Ответсвенный</label>
+                <label for="status_${max_id_count}" class="inline_label input_disabled">Статус</label>
             </div>
 
             <div class="inline_inputs">
@@ -272,9 +272,9 @@ $(document).ready(async function() {
 
                 <select name="priority" class="input inline_input input_disabled un_focused specific_select" id="priority_${max_id_count}" required>
                     <option disabled>Выберите приоритет</option>
-                    <option value="Высокий">Высокий</option>
-                    <option value="Средний">Средний</option>
-                    <option value="Низкий">Низкий</option>
+                    <option value="high">Высокий</option>
+                    <option value="medium">Средний</option>
+                    <option value="low">Низкий</option>
                 </select>
 
                 <input name="end_date"  min="${get_date(get_current_date(2*7*24*60*60*1000))}" type="date" class="input inline_input input_disabled un_focused" id="end_date_${max_id_count}" required>
@@ -283,10 +283,10 @@ $(document).ready(async function() {
 
                 <select name="state" class="input inline_input input_disabled un_focused specific_select" id="state_${max_id_count}" required>
                     <option disabled>Выберите статус</option>
-                    <option value="К выполнению">К выполнению</option>
-                    <option value="Выполняется">Выполняется</option>
-                    <option value="Выполнена">Выполнена</option>
-                    <option value="Отменена">Отменена</option>
+                    <option value="to be done">К выполнению</option>
+                    <option value="in progress">Выполняется</option>
+                    <option value="done">Выполнена</option>
+                    <option value="canceled">Отменена</option>
                 </select>
             </div>
 
@@ -295,14 +295,14 @@ $(document).ready(async function() {
         <div class="left_parameters left_parameters_start">
 
             <div class="left_labels">
-                <label for="creation_date_${max_id_count}" class="left_label">Дата создания</label>
-                <label for="update_date_${max_id_count}" class="left_label">Дата обновения</label>
-                <label for="creator_${max_id_count}" class="left_label">Создатель</label>
-                <label for="user_email_${max_id_count}" class="left_label">Почта ответсвенного</label>
-                <label for="description_${max_id_count}" class="left_label">Описание</label>
+                <label for="creation_date_${max_id_count}" class="left_label input_disabled">Дата создания</label>
+                <label for="update_date_${max_id_count}" class="left_label input_disabled">Дата обновения</label>
+                <label for="creator_${max_id_count}" class="left_label input_disabled">Создатель</label>
+                <label for="user_email_${max_id_count}" class="left_label input_disabled">Почта ответсвенного</label>
+                <label for="description_${max_id_count}" class="left_label input_disabled">Описание</label>
             
-                <label class="left_label input_disabled"></label>
-                <label class="left_label input_disabled"></label>
+                <label class="left_label input_disabled disabled_forever"></label>
+                <label class="left_label input_disabled disabled_forever"></label>
                     
             </div>
 
@@ -324,7 +324,7 @@ $(document).ready(async function() {
             <span class="result"></span>
             <span class="result"></span>
         
-            <span class="error error_start">У вас нет подчинённого с такой почтой</span>
+            <span class="result error error_start">У вас нет подчинённого с такой почтой</span>
         
             <span class="result"></span>
             <span class="result"></span>
@@ -369,6 +369,9 @@ $(document).ready(async function() {
             let task = $(this)
             let left_parameters_div = $(this).children('.task_form').children('.left_parameters')
             let request_result = $(this).children('.task_form').children('.request_result')
+            let $inline_input = $(this).children('.task_form').children('.inline_parameters').children('.inline_inputs').children('.inline_input')
+            let $left_input = $(this).children('.task_form').children('.left_parameters').children('.left_inputs').children('.left_input')
+
             task.toggleClass(function(index, cls, swt){
                 if(! (cls.search('task_start') === -1)){
                     $(this).removeClass('task_start')
